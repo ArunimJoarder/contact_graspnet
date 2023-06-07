@@ -58,9 +58,9 @@ def inference(global_config, checkpoint_dir, input_paths, K=None, local_regions=
         print('Loading ', p)
 
         pc_segments = {}
-        segmap, rgb, depth, cam_K, pc_full, pc_colors = load_available_input_data(p, K=K)
+        segmap, rgb, depth, cam_K, pc_full, pc_colors, pc_segments = load_available_input_data(p, K=K)
         
-        if segmap is None and (local_regions or filter_grasps):
+        if segmap is None and pc_segments == {} and (local_regions or filter_grasps):
             raise ValueError('Need segmentation map to extract local regions or filter grasps')
 
         if pc_full is None:

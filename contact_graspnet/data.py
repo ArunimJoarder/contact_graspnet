@@ -300,7 +300,7 @@ def load_available_input_data(p, K=None):
     :returns: All available data among segmap, rgb, depth, cam_K, pc_full, pc_colors
     """
     
-    cam_K, segmap, rgb, depth, pc_full, pc_colors = None, None, None, None, None, None
+    cam_K, segmap, rgb, depth, pc_full, pc_colors, pc_segments = None, None, None, None, None, None, {}
 
     if K is not None:
         if isinstance(K,str):
@@ -334,6 +334,10 @@ def load_available_input_data(p, K=None):
                 rgb = np.array(cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB))
         elif 'xyz' in keys:
             pc_full = np.array(data['xyz']).reshape(-1,3)
+            if 'pc_segments' in keys:
+                raw_segments = data['pc_segments']
+                for i in range(raw_segments.shape[0]):
+                    pc_segments[i + 1.0] = raw_segments[i]
             if 'xyz_color' in keys:
                 pc_colors = data['xyz_color']
     elif '.png' in p:
@@ -347,7 +351,7 @@ def load_available_input_data(p, K=None):
     else:
         raise ValueError('{} is neither png nor npz/npy file'.format(p))
     
-    return segmap, rgb, depth, cam_K, pc_full, pc_colors
+    return segmap, rgb, depth, cam_K, pc_full, pc_colors, pc_segments
 
 def load_graspnet_data(rgb_image_path):
     
